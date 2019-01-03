@@ -52,6 +52,41 @@ def analyze_review_distribution(df: pd.DataFrame) -> Dict:
     stats['missing_values'] = df.isnull().sum()
     
     # Language distribution
+def generate_eda_report(df: pd.DataFrame) -> str:
+    """
+    Generate a comprehensive EDA report.
+    
+    Args:
+        df (pd.DataFrame): Steam review DataFrame
+        
+    Returns:
+        str: Formatted EDA report
+    """
+    report = []
+    report.append("=== Steam Review Data Analysis Report ===\n")
+    
+    # Data overview
+    report.append(f"Dataset Shape: {df.shape}")
+    report.append(f"Total Reviews: {len(df)}")
+    
+    if 'review' in df.columns:
+        # Calculate average review length
+        df['review_length'] = df['review'].str.len()
+        avg_length = df['review_length'].mean()
+        report.append(f"Average Review Length: {avg_length:.2f} characters")
+        
+        # Word count analysis
+        df['word_count'] = df['review'].str.split().str.len()
+        avg_words = df['word_count'].mean()
+        report.append(f"Average Word Count: {avg_words:.2f} words")
+    
+    # Missing data analysis
+    missing_data = df.isnull().sum()
+    report.append(f"\nMissing Data Summary:")
+    for col, missing_count in missing_data[missing_data > 0].items():
+        report.append(f"  {col}: {missing_count} ({missing_count/len(df)*100:.1f}%)")
+    
+    return "\n".join(report)
     if 'language' in df.columns:
         stats['language_distribution'] = df['language'].value_counts()
     
