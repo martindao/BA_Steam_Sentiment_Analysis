@@ -192,6 +192,84 @@ class TfidfModelTuner:
         plt.tight_layout()
         plt.show()
         
+        
+        return top_features, top_coefficients
+
+    def tune_for_nlp(self, X_train, y_train) -> Dict[str, Any]:
+        """
+        Specialized TF-IDF tuning for NLP tasks with enhanced parameters.
+        
+        Args:
+            X_train: Training text data
+            y_train: Training labels
+            
+        Returns:
+            Dict[str, Any]: NLP-optimized tuning results
+        """
+        print("=== NLP-Optimized TF-IDF Model Tuning ===")
+        
+        # Enhanced NLP-specific parameter grid
+        nlp_param_grid = {
+            'tfidf__max_features': [2000, 3000, 5000, 8000],
+            'tfidf__ngram_range': [(1, 2), (1, 3), (2, 3)],
+            'tfidf__min_df': [2, 3, 5],
+            'tfidf__max_df': [0.85, 0.9, 0.95],
+            'tfidf__sublinear_tf': [True, False],
+            'tfidf__use_idf': [True, False],
+            'classifier__C': [0.1, 1.0, 10.0],
+            'classifier__penalty': ['l1', 'l2'],
+            'classifier__solver': ['liblinear', 'lbfgs']
+        }
+        
+        # NLP-specific pipeline with enhanced preprocessing
+        from sklearn.pipeline import Pipeline
+        from sklearn.feature_extraction.text import TfidfVectorizer
+        from sklearn.linear_model import LogisticRegression
+        
+        nlp_pipeline = Pipeline([
+            ('tfidf', TfidfVectorizer(
+                stop_words='english',
+                lowercase=True,
+                strip_accents='unicode',
+                binary=False,
+                dtype=np.float32
+            )),
+            ('classifier', LogisticRegression(
+                random_state=42, 
+                max_iter=2000,
+                class_weight='balanced'
+            ))
+        ])
+        
+        # Grid search with NLP optimizations
+        grid_search = GridSearchCV(
+            nlp_pipeline, 
+            nlp_param_grid, 
+            cv=5, 
+            scoring='accuracy',
+            n_jobs=-1,
+            verbose=2
+        )
+        
+        print("Starting NLP-optimized TF-IDF hyperparameter tuning...")
+        grid_search.fit(X_train, y_train)
+        
+        self.best_params = grid_search.best_params_
+        self.best_score = grid_search.best_score_
+        
+        results = {
+            'best_params': self.best_params,
+            'best_score': self.best_score,
+            'cv_results': grid_search.cv_results_,
+            'nlp_optimized': True,
+            'feature_count': grid_search.best_estimator_.named_steps['tfidf'].get_feature_names_out().shape[0]
+        }
+        
+        print(f"NLP-optimized best parameters: {self.best_params}")
+        print(f"NLP best cross-validation score: {self.best_score:.4f}")
+        print(f"Selected features: {results['feature_count']}")
+        
+        return results
         return top_features, top_coefficients
 
 def demo_tfidf_tuning():
