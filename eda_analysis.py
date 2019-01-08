@@ -177,5 +177,88 @@ def main():
     
     return stats
 
+    
+    return stats
+
+def enhanced_notebook_eda_pipeline(df: pd.DataFrame) -> Dict:
+    """
+    Enhanced EDA pipeline specifically optimized for Jupyter notebook usage.
+    
+    Args:
+        df (pd.DataFrame): Steam review DataFrame
+        
+    Returns:
+        Dict: Comprehensive notebook-ready analysis results
+    """
+    print("=== Enhanced Notebook EDA Pipeline for Steam Sentiment ===")
+    
+    notebook_results = {}
+    
+    # Data profiling for notebook display
+    notebook_results['data_profile'] = {
+        'shape': df.shape,
+        'memory_usage': df.memory_usage(deep=True).sum() / 1024**2,  # MB
+        'missing_percentage': (df.isnull().sum().sum() / (df.shape[0] * df.shape[1])) * 100,
+        'duplicate_rows': df.duplicated().sum()
+    }
+    
+    # Steam-specific sentiment analysis prep
+    if 'review' in df.columns:
+        # Review quality metrics
+        df['review_quality_score'] = df['review'].apply(
+            lambda x: len(str(x).split()) if pd.notna(x) else 0
+        )
+        
+        notebook_results['review_metrics'] = {
+            'avg_review_length': df['review'].str.len().mean(),
+            'avg_word_count': df['word_count'].mean() if 'word_count' in df.columns else 0,
+            'high_quality_reviews': (df['review_quality_score'] > 20).sum(),
+            'review_engagement': df['review_quality_score'].describe()
+        }
+    
+    # Steam-specific features analysis
+    steam_features = ['voted_up', 'votes_up', 'weighted_vote_score']
+    available_features = [f for f in steam_features if f in df.columns]
+    
+    if available_features:
+        notebook_results['steam_features'] = {}
+        for feature in available_features:
+            notebook_results['steam_features'][feature] = {
+                'distribution': df[feature].value_counts().to_dict(),
+                'statistics': df[feature].describe().to_dict()
+            }
+    
+    # Memory-optimized data sampling for notebooks
+    notebook_results['sampling_strategy'] = {
+        'recommended_sample_size': min(5000, len(df) // 10),  # 10% or 5k max
+        'stratified_columns': available_features[:2] if len(available_features) >= 2 else [],
+        'random_state': 42
+    }
+    
+    print(f"✓ Data Profile: {notebook_results['data_profile']['shape'][0]} rows, {notebook_results['data_profile']['memory_usage']:.1f}MB")
+    print(f"✓ Missing Data: {notebook_results['data_profile']['missing_percentage']:.1f}%")
+    print(f"✓ Recommended Sample: {notebook_results['sampling_strategy']['recommended_sample_size']} rows")
+    
+    return notebook_results
+
+def notebook_visualization_config() -> Dict:
+    """
+    Provide optimized visualization configurations for notebook usage.
+    
+    Returns:
+        Dict: Visualization configuration settings
+    """
+    return {
+        'figure_style': 'seaborn-v0_8',
+        'figure_size': (12, 8),
+        'dpi': 150,
+        'interactive_plots': True,
+        'color_palette': ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'],
+        'theme': 'lightgrid',
+        'save_formats': ['png', 'html', 'svg']
+    }
+
+if __name__ == "__main__":
+    main()
 if __name__ == "__main__":
     main()
