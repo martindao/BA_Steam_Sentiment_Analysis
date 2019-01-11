@@ -52,6 +52,20 @@ def analyze_review_distribution(df: pd.DataFrame) -> Dict:
     stats['missing_values'] = df.isnull().sum()
     
     # Language distribution
+    if 'language' in df.columns:
+        stats['language_distribution'] = df['language'].value_counts()
+    
+    # Vote distribution
+    if 'voted_up' in df.columns:
+        stats['vote_distribution'] = df['voted_up'].value_counts()
+    
+    # Review length analysis
+    if 'review' in df.columns:
+        df['review_length'] = df['review'].str.len()
+        stats['review_length_stats'] = df['review_length'].describe()
+    
+    return stats
+
 def generate_eda_report(df: pd.DataFrame) -> str:
     """
     Generate a comprehensive EDA report.
@@ -87,19 +101,6 @@ def generate_eda_report(df: pd.DataFrame) -> str:
         report.append(f"  {col}: {missing_count} ({missing_count/len(df)*100:.1f}%)")
     
     return "\n".join(report)
-    if 'language' in df.columns:
-        stats['language_distribution'] = df['language'].value_counts()
-    
-    # Vote distribution
-    if 'voted_up' in df.columns:
-        stats['vote_distribution'] = df['voted_up'].value_counts()
-    
-    # Review length analysis
-    if 'review' in df.columns:
-        df['review_length'] = df['review'].str.len()
-        stats['review_length_stats'] = df['review_length'].describe()
-    
-    return stats
 
 def create_eda_visualizations(df: pd.DataFrame) -> None:
     """
@@ -146,39 +147,6 @@ def create_eda_visualizations(df: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.savefig('steam_eda_analysis.png', dpi=300, bbox_inches='tight')
     plt.show()
-
-def main():
-    """
-    Main function to run the EDA analysis.
-    """
-    print("=== Steam Sentiment Analysis - EDA Pipeline ===")
-    print("Enhanced exploratory data analysis for Steam review data.")
-    print("This analysis provides insights into data quality and distribution.")
-    
-    # This would normally load real data
-    # df = load_steam_data('path/to/steam_reviews.csv')
-    
-    # For demonstration, create sample data
-    np.random.seed(42)
-    sample_data = {
-        'review': ['Great game!', 'Love the story', 'Amazing graphics', 'Best gameplay ever'] * 100,
-        'language': ['english'] * 400,
-        'voted_up': [True, False] * 200,
-        'author.playtime_forever': np.random.exponential(1000, 400)
-    }
-    df = pd.DataFrame(sample_data)
-    
-    # Run analysis
-    stats = analyze_review_distribution(df)
-    create_eda_visualizations(df)
-    
-    print("\n=== EDA Analysis Complete ===")
-    print("Check 'steam_eda_analysis.png' for visualizations.")
-    
-    return stats
-
-    
-    return stats
 
 def enhanced_notebook_eda_pipeline(df: pd.DataFrame) -> Dict:
     """
@@ -241,6 +209,77 @@ def enhanced_notebook_eda_pipeline(df: pd.DataFrame) -> Dict:
     
     return notebook_results
 
+def create_exploratory_charts(df: pd.DataFrame) -> Dict:
+    """
+    Create comprehensive exploratory charts for Steam sentiment analysis.
+    
+    Args:
+        df (pd.DataFrame): Steam review DataFrame
+        
+    Returns:
+        Dict: Chart configurations and file paths
+    """
+    print("=== Creating Exploratory Charts for EDA ===")
+    
+    chart_configs = {}
+    
+    # Sentiment distribution chart
+    if 'review' in df.columns:
+        plt.figure(figsize=(12, 6))
+        
+        # Review length distribution
+        plt.subplot(1, 2, 1)
+        df['review_length'] = df['review'].str.len()
+        plt.hist(df['review_length'], bins=50, alpha=0.7, color='skyblue', edgecolor='black')
+        plt.title('Review Length Distribution')
+        plt.xlabel('Character Count')
+        plt.ylabel('Frequency')
+        plt.grid(True, alpha=0.3)
+        
+        # Word count distribution
+        plt.subplot(1, 2, 2)
+        df['word_count'] = df['review'].str.split().str.len()
+        plt.hist(df['word_count'], bins=50, alpha=0.7, color='lightcoral', edgecolor='black')
+        plt.title('Word Count Distribution')
+        plt.xlabel('Word Count')
+        plt.ylabel('Frequency')
+        plt.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        plt.savefig('steam_eda_exploratory_charts.png', dpi=300, bbox_inches='tight')
+        plt.show()
+        
+        chart_configs['length_analysis'] = 'steam_eda_exploratory_charts.png'
+    
+    # Steam-specific feature analysis
+    steam_features = ['voted_up', 'votes_up', 'weighted_vote_score']
+    available_features = [f for f in steam_features if f in df.columns]
+    
+    if len(available_features) >= 2:
+        plt.figure(figsize=(15, 5))
+        
+        for i, feature in enumerate(available_features[:3]):
+            plt.subplot(1, 3, i+1)
+            if feature == 'voted_up':
+                vote_counts = df[feature].value_counts()
+                plt.pie(vote_counts.values, labels=['Negative', 'Positive'], autopct='%1.1f%%')
+                plt.title(f'{feature.replace("_", " ").title()} Distribution')
+            else:
+                plt.hist(df[feature], bins=30, alpha=0.7, color='lightgreen', edgecolor='black')
+                plt.title(f'{feature.replace("_", " ").title()} Histogram')
+                plt.xlabel(feature.replace("_", " ").title())
+                plt.ylabel('Frequency')
+                plt.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        plt.savefig('steam_features_eda_charts.png', dpi=300, bbox_inches='tight')
+        plt.show()
+        
+        chart_configs['steam_features'] = 'steam_features_eda_charts.png'
+    
+    print(f"✓ Generated {len(chart_configs)} exploratory charts")
+    return chart_configs
+
 def notebook_visualization_config() -> Dict:
     """
     Provide optimized visualization configurations for notebook usage.
@@ -258,7 +297,35 @@ def notebook_visualization_config() -> Dict:
         'save_formats': ['png', 'html', 'svg']
     }
 
-if __name__ == "__main__":
-    main()
+def main():
+    """
+    Main function to run the EDA analysis.
+    """
+    print("=== Steam Sentiment Analysis - EDA Pipeline ===")
+    print("Enhanced exploratory data analysis for Steam review data.")
+    print("This analysis provides insights into data quality and distribution.")
+    
+    # This would normally load real data
+    # df = load_steam_data('path/to/steam_reviews.csv')
+    
+    # For demonstration, create sample data
+    np.random.seed(42)
+    sample_data = {
+        'review': ['Great game!', 'Love the story', 'Amazing graphics', 'Best gameplay ever'] * 100,
+        'language': ['english'] * 400,
+        'voted_up': [True, False] * 200,
+        'author.playtime_forever': np.random.exponential(1000, 400)
+    }
+    df = pd.DataFrame(sample_data)
+    
+    # Run analysis
+    stats = analyze_review_distribution(df)
+    create_eda_visualizations(df)
+    
+    print("\n=== EDA Analysis Complete ===")
+    print("Check 'steam_eda_analysis.png' for visualizations.")
+    
+    return stats
+
 if __name__ == "__main__":
     main()
