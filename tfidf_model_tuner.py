@@ -270,9 +270,12 @@ class TfidfModelTuner:
         
         return results
 
-def compare_nlp_models():
+def compare_sentiment_models():
     """
-    Compare different NLP models for Steam sentiment analysis.
+    Compare different sentiment analysis models specifically for Steam reviews.
+    
+    Comprehensive comparison of sentiment classification approaches optimized
+    for Steam game review text including preprocessing and feature engineering.
     
     Returns:
         Dict: Comparative analysis results
