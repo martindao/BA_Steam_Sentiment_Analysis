@@ -428,6 +428,9 @@ def conduct_nlp_experiment_comparison():
 def demo_tfidf_tuning():
     """
     Demonstration of TF-IDF model tuning for Steam sentiment analysis.
+    
+    Refined pipeline specifically optimized for Jupyter notebook environments
+    with enhanced Steam-specific preprocessing and sentiment analysis features.
     """
     print("=== Steam Sentiment Analysis - TF-IDF Model Tuning Demo ===")
     
