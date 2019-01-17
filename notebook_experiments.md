@@ -367,3 +367,8 @@ class AdvancedSentimentAnalyzer:
 - **Export Options**: Multiple output formats (PNG, HTML, SVG, PDF)
 - **Interactive Features**: Hover tooltips, zoom, and filtering capabilities
 - User feedback integration
+
+### 2019-01-17 Exploratory EDA Chart
+- Added a stacked sentiment vs. hours-played view for quick hypothesis validation.
+- Highlighted filter presets that isolate Steam genres with volatile review swings.
+- Captured the companion chart image path (``reports/eda/sentiment_hours.png``) for notebook linking.
