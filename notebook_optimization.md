@@ -191,3 +191,8 @@ class SteamNLPProcessor:
 - **Cell Execution Tracking**: Monitor execution time for each analysis step
 - **Error Recovery**: Implement robust error handling for long-running operations
 - Comprehensive README updates
+
+### 2019-01-18 Exploratory EDA Snapshot
+- Captured a percentile ribbon chart contrasting review polarity vs. review length.
+- Logged widget presets for filtering low-volume tags before chart export.
+- Linked the generated artifact (`reports/eda/runtime_polarity.png`) for quick verification.
