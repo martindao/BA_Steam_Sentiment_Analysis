@@ -194,6 +194,65 @@ class TfidfModelTuner:
         
         return top_features, top_coefficients
 
+    def plot_sentiment_feature_map(
+        self,
+        pipeline: Pipeline,
+        top_n: int = 15,
+        figsize: Tuple[int, int] = (12, 6),
+    ) -> pd.DataFrame:
+        """
+        Build an exploratory chart for NLP tokens showing positive/negative lift.
+
+        Args:
+            pipeline: Trained TF-IDF + classifier pipeline
+            top_n: Number of positive/negative terms to highlight
+            figsize: Figure size for the visualization
+
+        Returns:
+            pd.DataFrame: Aggregated feature contribution table
+        """
+        if not hasattr(pipeline, "named_steps"):
+            raise ValueError("Pipeline with named steps is required for feature mapping")
+
+        vectorizer = pipeline.named_steps.get("tfidf")
+        classifier = pipeline.named_steps.get("classifier")
+        if vectorizer is None or classifier is None:
+            raise ValueError("Pipeline must include 'tfidf' and 'classifier' steps")
+
+        feature_names = vectorizer.get_feature_names_out()
+        coefficients = classifier.coef_[0]
+        feature_frame = pd.DataFrame(
+            {
+                "feature": feature_names,
+                "coefficient": coefficients,
+                "sentiment": np.where(coefficients >= 0, "Positive", "Negative"),
+            }
+        )
+
+        positive = feature_frame.nlargest(top_n, "coefficient")
+        negative = feature_frame.nsmallest(top_n, "coefficient")
+        chart_frame = (
+            pd.concat([positive, negative])
+            .assign(weight=lambda df: df["coefficient"].abs())
+            .sort_values("weight", ascending=True)
+        )
+
+        plt.figure(figsize=figsize)
+        sns.barplot(
+            data=chart_frame,
+            y="feature",
+            x="coefficient",
+            hue="sentiment",
+            palette={"Positive": "#1f77b4", "Negative": "#d62728"},
+        )
+        plt.axvline(0, color="black", linewidth=0.8, linestyle="--")
+        plt.title("Exploratory NLP Token Lift (Positive vs Negative)")
+        plt.xlabel("Coefficient Impact")
+        plt.ylabel("Token")
+        plt.tight_layout()
+
+        return chart_frame
+
     def tune_for_nlp(self, X_train, y_train) -> Dict[str, Any]:
         """
         Specialized TF-IDF tuning for NLP tasks with enhanced parameters.
