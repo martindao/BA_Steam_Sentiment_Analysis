@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Normalize sentiment experiment docs and notebooks for comparison
+*.md diff=markdown
+Sandbox/*.ipynb text linguist-language=JSON
