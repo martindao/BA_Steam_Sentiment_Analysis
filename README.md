@@ -30,3 +30,8 @@ To run the analysis:
 
 This project is for educational purposes.
 "" 
+
+### Exploratory Visualizations
+- Added a stacked sentiment vs. review-volume chart to track weekend spikes.
+- Logged genre-specific filters for the notebook demo to keep comparisons reproducible.
+- Linked `reports/visualizations/sentiment_volume.png` for later sharing.
