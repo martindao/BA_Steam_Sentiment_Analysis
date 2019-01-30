@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -147,6 +147,78 @@ def create_eda_visualizations(df: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.savefig('steam_eda_analysis.png', dpi=300, bbox_inches='tight')
     plt.show()
+
+
+def plot_sentiment_vs_hours(
+    df: pd.DataFrame,
+    hours_column: str = "author.playtime_forever",
+    sentiment_column: str = "voted_up",
+    buckets: int = 8,
+    output_path: Optional[str] = None,
+) -> pd.DataFrame:
+    """
+    Create a stacked sentiment chart grouped by playtime buckets.
+
+    Args:
+        df: Steam review dataset.
+        hours_column: Column containing total playtime in hours.
+        sentiment_column: Column containing sentiment labels.
+        buckets: Number of quantile buckets for the chart.
+        output_path: Optional path to save the generated figure.
+
+    Returns:
+        pd.DataFrame summarizing sentiment share per bucket.
+    """
+    missing = {col for col in (hours_column, sentiment_column) if col not in df.columns}
+    if missing:
+        raise ValueError(f"Missing required columns for sentiment chart: {missing}")
+
+    working_df = df[[hours_column, sentiment_column]].dropna().copy()
+    if working_df.empty:
+        raise ValueError("No data available to build the sentiment vs. hours chart")
+
+    quantiles = max(2, min(buckets, working_df[hours_column].nunique()))
+    working_df["hours_bucket"] = pd.qcut(
+        working_df[hours_column].clip(lower=0),
+        q=quantiles,
+        duplicates="drop",
+    )
+
+    summary = (
+        working_df.groupby(["hours_bucket", sentiment_column])
+        .size()
+        .reset_index(name="count")
+    )
+    summary["share"] = summary.groupby("hours_bucket")["count"].transform(
+        lambda counts: counts / counts.sum()
+    )
+
+    pivot = summary.pivot_table(
+        index="hours_bucket",
+        columns=sentiment_column,
+        values="share",
+        fill_value=0,
+    )
+
+    plt.figure(figsize=(10, 6))
+    pivot.plot(
+        kind="bar",
+        stacked=True,
+        colormap="coolwarm",
+        ax=plt.gca(),
+    )
+    plt.title("Sentiment share vs. hours played")
+    plt.xlabel("Hours played (bucketed quantiles)")
+    plt.ylabel("Sentiment share")
+    plt.legend(title="Sentiment", bbox_to_anchor=(1.04, 1), loc="upper left")
+    plt.tight_layout()
+
+    if output_path:
+        plt.savefig(output_path, dpi=200, bbox_inches='tight')
+    else:
+        plt.show()
+
+    return summary
 
 def enhanced_notebook_eda_pipeline(df: pd.DataFrame) -> Dict:
     """
