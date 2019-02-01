@@ -372,3 +372,8 @@ class AdvancedSentimentAnalyzer:
 - Added a stacked sentiment vs. hours-played view for quick hypothesis validation.
 - Highlighted filter presets that isolate Steam genres with volatile review swings.
 - Captured the companion chart image path (``reports/eda/sentiment_hours.png``) for notebook linking.
+
+### 2019-02-01 Sentiment pipeline refinement
+- Logged the exact preprocessing steps used for polarity-based batching.
+- Captured the parameter grid that aligns tokenizer choices with the TF-IDF notebook runs.
+- Added notes on how we sync the visualization preset with `plot_sentiment_vs_hours()` output.
