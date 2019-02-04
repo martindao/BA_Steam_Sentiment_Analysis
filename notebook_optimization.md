@@ -196,3 +196,8 @@ class SteamNLPProcessor:
 - Captured a percentile ribbon chart contrasting review polarity vs. review length.
 - Logged widget presets for filtering low-volume tags before chart export.
 - Linked the generated artifact (`reports/eda/runtime_polarity.png`) for quick verification.
+
+### 2019-02-04 Notebook visualization drop
+- Added guidance for wiring the stacked sentiment vs. hours widget into notebooks.
+- Captured the Matplotlib/Seaborn style overrides to match the TF-IDF comparison cells.
+- Noted where the generated PNG (`reports/notebooks/sentiment_hours.png`) is stored for demos.
