@@ -19,7 +19,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Optional
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -252,6 +252,71 @@ class TfidfModelTuner:
         plt.tight_layout()
 
         return chart_frame
+
+    def build_sentiment_runtime_chart(
+        self,
+        df: pd.DataFrame,
+        hours_column: str = "author.playtime_forever",
+        sentiment_column: str = "voted_up",
+        buckets: int = 6,
+        output_path: Optional[str] = None,
+    ) -> pd.DataFrame:
+        """
+        Plot an exploratory stacked sentiment chart to pair with TF-IDF runs.
+
+        Args:
+            df: Steam review dataset.
+            hours_column: Column describing the user's hours played.
+            sentiment_column: Column describing positive/negative votes.
+            buckets: Number of quantile buckets to plot.
+            output_path: Optional path to save the figure.
+
+        Returns:
+            Aggregated sentiment distribution per playtime bucket.
+        """
+        missing = {col for col in (hours_column, sentiment_column) if col not in df.columns}
+        if missing:
+            raise ValueError(f"Missing required columns for sentiment chart: {missing}")
+
+        filtered = df[[hours_column, sentiment_column]].dropna().copy()
+        if filtered.empty:
+            raise ValueError("No rows available after filtering sentiment chart columns.")
+
+        quantiles = max(2, min(buckets, filtered[hours_column].nunique()))
+        filtered["hours_bucket"] = pd.qcut(
+            filtered[hours_column].clip(lower=0),
+            q=quantiles,
+            duplicates="drop",
+        )
+
+        summary = (
+            filtered.groupby(["hours_bucket", sentiment_column])
+            .size()
+            .reset_index(name="count")
+        )
+        summary["share"] = summary.groupby("hours_bucket")["count"].transform(
+            lambda counts: counts / counts.sum()
+        )
+
+        plt.figure(figsize=(11, 6))
+        pivot = summary.pivot_table(
+            index="hours_bucket",
+            columns=sentiment_column,
+            values="share",
+            fill_value=0,
+        )
+        pivot.plot(kind="bar", stacked=True, colormap="coolwarm", ax=plt.gca())
+        plt.title("Sentiment share vs. hours played (TF-IDF context)")
+        plt.xlabel("Hours played (quantile buckets)")
+        plt.ylabel("Sentiment share")
+        plt.tight_layout()
+
+        if output_path:
+            plt.savefig(output_path, dpi=200, bbox_inches="tight")
+        else:
+            plt.show()
+
+        return summary
 
     def tune_for_nlp(self, X_train, y_train) -> Dict[str, Any]:
         """
