@@ -4,3 +4,5 @@
 # Normalize sentiment experiment docs and notebooks for comparison
 *.md diff=markdown
 Sandbox/*.ipynb text linguist-language=JSON
+# Treat generated EDA chart artifacts as binary snapshots
+reports/**/*.png binary
