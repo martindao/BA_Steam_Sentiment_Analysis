@@ -81,3 +81,8 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - Compared logistic regression vs. linear SVM using the refreshed Steam review sample.
 - Highlighted lift (+3.2 F1) from class-weighted TF-IDF features for long reviews.
 - Captured chart references for the notebook (`reports/sentiment_model_comparison.png`).
+
+### NLP Experiment Recap (2019-02-05)
+- Compared TF-IDF baseline with notebook-optimized embeddings for the influencer sentiment slice.
+- Logged cross-validation deltas (+2.1 F1) after enabling the new plot-driven feature pruning.
+- Captured artifact references (`reports/nlp/tfidf_notebook_comparison.csv`).
