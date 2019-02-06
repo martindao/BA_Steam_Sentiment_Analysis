@@ -35,3 +35,8 @@ This project is for educational purposes.
 - Added a stacked sentiment vs. review-volume chart to track weekend spikes.
 - Logged genre-specific filters for the notebook demo to keep comparisons reproducible.
 - Linked `reports/visualizations/sentiment_volume.png` for later sharing.
+
+### EDA Notebook Recipes
+- Described how to call `plot_sentiment_vs_hours()` to generate stacked sentiment charts for stakeholder updates.
+- Added reminder to store the resulting PNG in `reports/visualizations/` for version control tracking.
+- Highlighted the review segmentation filters we apply before exporting the chart.
