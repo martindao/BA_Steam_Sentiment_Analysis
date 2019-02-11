@@ -401,3 +401,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# [2019-02-11] (Sentiment) schedule note: Document experiment comparing Sentiment models
