@@ -377,3 +377,5 @@ class AdvancedSentimentAnalyzer:
 - Logged the exact preprocessing steps used for polarity-based batching.
 - Captured the parameter grid that aligns tokenizer choices with the TF-IDF notebook runs.
 - Added notes on how we sync the visualization preset with `plot_sentiment_vs_hours()` output.
+
+- [2019-02-12] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
