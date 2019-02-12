@@ -201,3 +201,5 @@ class SteamNLPProcessor:
 - Added guidance for wiring the stacked sentiment vs. hours widget into notebooks.
 - Captured the Matplotlib/Seaborn style overrides to match the TF-IDF comparison cells.
 - Noted where the generated PNG (`reports/notebooks/sentiment_hours.png`) is stored for demos.
+
+- [2019-02-12] (Sentiment) schedule note: Document experiment comparing Sentiment models
