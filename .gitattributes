@@ -6,3 +6,5 @@
 Sandbox/*.ipynb text linguist-language=JSON
 # Treat generated EDA chart artifacts as binary snapshots
 reports/**/*.png binary
+
+# [2019-02-13] (Sentiment) schedule note: Add exploratory chart for Sentiment
