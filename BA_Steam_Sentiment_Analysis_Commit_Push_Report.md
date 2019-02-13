@@ -86,3 +86,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - Compared TF-IDF baseline with notebook-optimized embeddings for the influencer sentiment slice.
 - Logged cross-validation deltas (+2.1 F1) after enabling the new plot-driven feature pruning.
 - Captured artifact references (`reports/nlp/tfidf_notebook_comparison.csv`).
+
+- [2019-02-13] (EDA) schedule note: Document experiment comparing EDA models
