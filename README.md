@@ -40,3 +40,5 @@ This project is for educational purposes.
 - Described how to call `plot_sentiment_vs_hours()` to generate stacked sentiment charts for stakeholder updates.
 - Added reminder to store the resulting PNG in `reports/visualizations/` for version control tracking.
 - Highlighted the review segmentation filters we apply before exporting the chart.
+
+- [2019-02-14] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
