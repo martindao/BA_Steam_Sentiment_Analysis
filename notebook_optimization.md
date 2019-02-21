@@ -203,3 +203,5 @@ class SteamNLPProcessor:
 - Noted where the generated PNG (`reports/notebooks/sentiment_hours.png`) is stored for demos.
 
 - [2019-02-12] (Sentiment) schedule note: Document experiment comparing Sentiment models
+
+- [2019-02-21] (NLP) schedule note: Document experiment comparing NLP models
