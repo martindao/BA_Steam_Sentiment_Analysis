@@ -607,3 +607,5 @@ if __name__ == "__main__":
     demo_tfidf_tuning()
 
 # [2019-02-13] (NLP) schedule note: Add exploratory chart for NLP
+
+# [2019-02-22] (EDA) schedule note: Add exploratory chart for EDA
