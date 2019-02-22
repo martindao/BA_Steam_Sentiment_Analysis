@@ -8,3 +8,5 @@ Sandbox/*.ipynb text linguist-language=JSON
 reports/**/*.png binary
 
 # [2019-02-13] (Sentiment) schedule note: Add exploratory chart for Sentiment
+
+# [2019-02-22] (Notebook) schedule note: Document experiment comparing Notebook models
