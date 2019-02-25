@@ -42,3 +42,5 @@ This project is for educational purposes.
 - Highlighted the review segmentation filters we apply before exporting the chart.
 
 - [2019-02-14] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
+
+- [2019-02-25] (NLP) schedule note: Document experiment comparing NLP models
