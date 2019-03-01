@@ -205,3 +205,5 @@ class SteamNLPProcessor:
 - [2019-02-12] (Sentiment) schedule note: Document experiment comparing Sentiment models
 
 - [2019-02-21] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-03-01] (NLP) schedule note: Document experiment comparing NLP models
