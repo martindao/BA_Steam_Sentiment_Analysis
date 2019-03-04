@@ -90,3 +90,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-02-13] (EDA) schedule note: Document experiment comparing EDA models
 
 - [2019-02-22] (Notebook) schedule note: Add exploratory chart for Notebook
+
+- [2019-03-04] (NLP) schedule note: Add exploratory chart for NLP
