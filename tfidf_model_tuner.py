@@ -609,3 +609,5 @@ if __name__ == "__main__":
 # [2019-02-13] (NLP) schedule note: Add exploratory chart for NLP
 
 # [2019-02-22] (EDA) schedule note: Add exploratory chart for EDA
+
+# [2019-03-04] (EDA) schedule note: Tune TF-IDF model for EDA
