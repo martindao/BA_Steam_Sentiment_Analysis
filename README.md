@@ -44,3 +44,5 @@ This project is for educational purposes.
 - [2019-02-14] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
 
 - [2019-02-25] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-03-05] (Notebook) schedule note: Tune TF-IDF model for Notebook
