@@ -207,3 +207,5 @@ class SteamNLPProcessor:
 - [2019-02-21] (NLP) schedule note: Document experiment comparing NLP models
 
 - [2019-03-01] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-03-14] (NLP) schedule note: Add exploratory chart for NLP
