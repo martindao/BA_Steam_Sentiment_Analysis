@@ -92,3 +92,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-02-22] (Notebook) schedule note: Add exploratory chart for Notebook
 
 - [2019-03-04] (NLP) schedule note: Add exploratory chart for NLP
+
+- [2019-03-19] (NLP) schedule note: Document experiment comparing NLP models
