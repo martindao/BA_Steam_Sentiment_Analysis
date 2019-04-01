@@ -387,3 +387,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-03-13] (Notebook) schedule note: Document experiment comparing Notebook models
 
 - [2019-03-22] (EDA) schedule note: Document experiment comparing EDA models
+
+- [2019-04-01] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
