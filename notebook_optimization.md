@@ -211,3 +211,5 @@ class SteamNLPProcessor:
 - [2019-03-14] (NLP) schedule note: Add exploratory chart for NLP
 
 - [2019-03-25] (EDA) schedule note: Document experiment comparing EDA models
+
+- [2019-04-02] (Sentiment) schedule note: Add exploratory chart for Sentiment
