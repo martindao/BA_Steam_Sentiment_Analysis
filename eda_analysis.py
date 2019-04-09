@@ -413,3 +413,5 @@ if __name__ == "__main__":
 # [2019-03-21] (Notebook) schedule note: Tune TF-IDF model for Notebook
 
 # [2019-03-29] (Sentiment) schedule note: Document experiment comparing Sentiment models
+
+# [2019-04-09] (Sentiment) schedule note: Add exploratory chart for Sentiment
