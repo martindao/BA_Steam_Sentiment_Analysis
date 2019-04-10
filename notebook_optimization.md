@@ -213,3 +213,5 @@ class SteamNLPProcessor:
 - [2019-03-25] (EDA) schedule note: Document experiment comparing EDA models
 
 - [2019-04-02] (Sentiment) schedule note: Add exploratory chart for Sentiment
+
+- [2019-04-10] (NLP) schedule note: Tune TF-IDF model for NLP
