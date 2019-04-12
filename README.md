@@ -52,3 +52,5 @@ This project is for educational purposes.
 - [2019-03-27] (EDA) schedule note: Add exploratory chart for EDA
 
 - [2019-04-04] (EDA) schedule note: Add exploratory chart for EDA
+
+- [2019-04-12] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
