@@ -22,3 +22,5 @@ reports/**/*.png binary
 # [2019-04-11] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
 
 # [2019-04-18] (EDA) schedule note: Document experiment comparing EDA models
+
+# [2019-04-29] (Notebook) schedule note: Add exploratory chart for Notebook
