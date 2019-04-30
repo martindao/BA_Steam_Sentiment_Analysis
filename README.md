@@ -56,3 +56,5 @@ This project is for educational purposes.
 - [2019-04-12] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
 
 - [2019-04-19] (Notebook) schedule note: Add exploratory chart for Notebook
+
+- [2019-04-30] (EDA) schedule note: Tune TF-IDF model for EDA
