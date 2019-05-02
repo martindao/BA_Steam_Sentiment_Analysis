@@ -419,3 +419,5 @@ if __name__ == "__main__":
 # [2019-04-16] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
 
 # [2019-04-23] (EDA) schedule note: Tune TF-IDF model for EDA
+
+# [2019-05-02] (Notebook) schedule note: Refine Steam sentiment pipeline for Notebook
