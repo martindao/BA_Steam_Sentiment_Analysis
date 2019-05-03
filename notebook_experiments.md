@@ -395,3 +395,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-04-16] (EDA) schedule note: Document experiment comparing EDA models
 
 - [2019-04-25] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
+
+- [2019-05-03] (EDA) schedule note: Add exploratory chart for EDA
