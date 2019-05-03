@@ -219,3 +219,5 @@ class SteamNLPProcessor:
 - [2019-04-17] (NLP) schedule note: Tune TF-IDF model for NLP
 
 - [2019-04-26] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-05-03] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
