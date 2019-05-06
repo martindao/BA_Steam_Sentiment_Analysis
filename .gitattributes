@@ -24,3 +24,5 @@ reports/**/*.png binary
 # [2019-04-18] (EDA) schedule note: Document experiment comparing EDA models
 
 # [2019-04-29] (Notebook) schedule note: Add exploratory chart for Notebook
+
+# [2019-05-06] (NLP) schedule note: Tune TF-IDF model for NLP
