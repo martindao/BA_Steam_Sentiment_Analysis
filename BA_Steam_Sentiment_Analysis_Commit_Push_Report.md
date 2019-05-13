@@ -106,3 +106,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-04-29] (Notebook) schedule note: Refine Steam sentiment pipeline for Notebook
 
 - [2019-05-07] (EDA) schedule note: Tune TF-IDF model for EDA
+
+- [2019-05-13] (EDA) schedule note: Add exploratory chart for EDA
