@@ -60,3 +60,5 @@ This project is for educational purposes.
 - [2019-04-30] (EDA) schedule note: Tune TF-IDF model for EDA
 
 - [2019-05-08] (Notebook) schedule note: Document experiment comparing Notebook models
+
+- [2019-05-14] (NLP) schedule note: Add exploratory chart for NLP
