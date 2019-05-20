@@ -399,3 +399,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-05-03] (EDA) schedule note: Add exploratory chart for EDA
 
 - [2019-05-10] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-05-20] (EDA) schedule note: Tune TF-IDF model for EDA
