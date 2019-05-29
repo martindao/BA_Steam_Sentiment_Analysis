@@ -629,3 +629,5 @@ if __name__ == "__main__":
 # [2019-05-13] (NLP) schedule note: Tune TF-IDF model for NLP
 
 # [2019-05-20] (NLP) schedule note: Document experiment comparing NLP models
+
+# [2019-05-29] (EDA) schedule note: Document experiment comparing EDA models
