@@ -64,3 +64,5 @@ This project is for educational purposes.
 - [2019-05-14] (NLP) schedule note: Add exploratory chart for NLP
 
 - [2019-05-21] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-05-30] (Notebook) schedule note: Add exploratory chart for Notebook
