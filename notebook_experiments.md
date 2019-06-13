@@ -405,3 +405,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-05-28] (Notebook) schedule note: Add exploratory chart for Notebook
 
 - [2019-06-06] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
+
+- [2019-06-13] (Notebook) schedule note: Refine Steam sentiment pipeline for Notebook
