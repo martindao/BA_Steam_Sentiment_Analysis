@@ -633,3 +633,5 @@ if __name__ == "__main__":
 # [2019-05-29] (EDA) schedule note: Document experiment comparing EDA models
 
 # [2019-06-07] (Notebook) schedule note: Add exploratory chart for Notebook
+
+# [2019-06-14] (NLP) schedule note: Add exploratory chart for NLP
