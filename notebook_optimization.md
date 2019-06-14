@@ -229,3 +229,5 @@ class SteamNLPProcessor:
 - [2019-05-28] (Notebook) schedule note: Document experiment comparing Notebook models
 
 - [2019-06-06] (EDA) schedule note: Add exploratory chart for EDA
+
+- [2019-06-14] (NLP) schedule note: Document experiment comparing NLP models
