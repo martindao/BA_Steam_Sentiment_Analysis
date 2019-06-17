@@ -114,3 +114,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-05-30] (Sentiment) schedule note: Add exploratory chart for Sentiment
 
 - [2019-06-10] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
+
+- [2019-06-17] (Sentiment) schedule note: Add exploratory chart for Sentiment
