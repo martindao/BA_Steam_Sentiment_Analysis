@@ -68,3 +68,5 @@ This project is for educational purposes.
 - [2019-05-30] (Notebook) schedule note: Add exploratory chart for Notebook
 
 - [2019-06-10] (Sentiment) schedule note: Add exploratory chart for Sentiment
+
+- [2019-06-17] (EDA) schedule note: Add exploratory chart for EDA
