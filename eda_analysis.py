@@ -431,3 +431,5 @@ if __name__ == "__main__":
 # [2019-06-05] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
 
 # [2019-06-13] (Notebook) schedule note: Refine Steam sentiment pipeline for Notebook
+
+# [2019-06-20] (NLP) schedule note: Add exploratory chart for NLP
