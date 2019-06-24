@@ -36,3 +36,5 @@ reports/**/*.png binary
 # [2019-06-07] (NLP) schedule note: Document experiment comparing NLP models
 
 # [2019-06-17] (Sentiment) schedule note: Document experiment comparing Sentiment models
+
+# [2019-06-24] (Notebook) schedule note: Tune TF-IDF model for Notebook
