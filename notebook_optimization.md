@@ -233,3 +233,5 @@ class SteamNLPProcessor:
 - [2019-06-14] (NLP) schedule note: Document experiment comparing NLP models
 
 - [2019-06-21] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
+
+- [2019-07-02] (Notebook) schedule note: Document experiment comparing Notebook models
