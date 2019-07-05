@@ -118,3 +118,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-06-17] (Sentiment) schedule note: Add exploratory chart for Sentiment
 
 - [2019-06-24] (Notebook) schedule note: Tune TF-IDF model for Notebook
+
+- [2019-07-05] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
