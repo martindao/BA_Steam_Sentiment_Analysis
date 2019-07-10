@@ -435,3 +435,5 @@ if __name__ == "__main__":
 # [2019-06-20] (NLP) schedule note: Add exploratory chart for NLP
 
 # [2019-06-28] (Notebook) schedule note: Add exploratory chart for Notebook
+
+# [2019-07-10] (Sentiment) schedule note: Refine Steam sentiment pipeline for Sentiment
