@@ -40,3 +40,5 @@ reports/**/*.png binary
 # [2019-06-24] (Notebook) schedule note: Tune TF-IDF model for Notebook
 
 # [2019-07-05] (Notebook) schedule note: Add exploratory chart for Notebook
+
+# [2019-07-12] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
