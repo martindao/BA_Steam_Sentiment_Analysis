@@ -437,3 +437,5 @@ if __name__ == "__main__":
 # [2019-06-28] (Notebook) schedule note: Add exploratory chart for Notebook
 
 # [2019-07-10] (Sentiment) schedule note: Refine Steam sentiment pipeline for Sentiment
+
+# [2019-07-18] (Notebook) schedule note: Tune TF-IDF model for Notebook
