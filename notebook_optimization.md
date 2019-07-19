@@ -237,3 +237,5 @@ class SteamNLPProcessor:
 - [2019-07-02] (Notebook) schedule note: Document experiment comparing Notebook models
 
 - [2019-07-11] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
+
+- [2019-07-19] (Notebook) schedule note: Document experiment comparing Notebook models
