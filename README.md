@@ -76,3 +76,5 @@ This project is for educational purposes.
 - [2019-07-08] (EDA) schedule note: Document experiment comparing EDA models
 
 - [2019-07-15] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
+
+- [2019-07-23] (NLP) schedule note: Tune TF-IDF model for NLP
