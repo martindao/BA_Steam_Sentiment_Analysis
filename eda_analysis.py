@@ -441,3 +441,5 @@ if __name__ == "__main__":
 # [2019-07-18] (Notebook) schedule note: Tune TF-IDF model for Notebook
 
 # [2019-07-25] (Notebook) schedule note: Add exploratory chart for Notebook
+
+# [2019-08-05] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
