@@ -417,3 +417,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-07-19] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
 
 - [2019-07-26] (NLP) schedule note: Add exploratory chart for NLP
+
+- [2019-08-07] (NLP) schedule note: Tune TF-IDF model for NLP
