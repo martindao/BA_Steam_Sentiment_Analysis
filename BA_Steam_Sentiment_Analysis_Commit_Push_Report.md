@@ -126,3 +126,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-07-22] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
 
 - [2019-07-30] (NLP) schedule note: Tune TF-IDF model for NLP
+
+- [2019-08-09] (NLP) schedule note: Add exploratory chart for NLP
