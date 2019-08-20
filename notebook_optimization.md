@@ -243,3 +243,5 @@ class SteamNLPProcessor:
 - [2019-07-29] (Notebook) schedule note: Refine Steam sentiment pipeline for Notebook
 
 - [2019-08-07] (Notebook) schedule note: Tune TF-IDF model for Notebook
+
+- [2019-08-20] (Notebook) schedule note: Add exploratory chart for Notebook
