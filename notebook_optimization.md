@@ -247,3 +247,5 @@ class SteamNLPProcessor:
 - [2019-08-20] (Notebook) schedule note: Add exploratory chart for Notebook
 
 - [2019-08-29] (EDA) schedule note: Tune TF-IDF model for EDA
+
+- [2019-09-09] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
