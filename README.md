@@ -86,3 +86,5 @@ This project is for educational purposes.
 - [2019-08-22] (Notebook) schedule note: Document experiment comparing Notebook models
 
 - [2019-08-30] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-09-11] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
