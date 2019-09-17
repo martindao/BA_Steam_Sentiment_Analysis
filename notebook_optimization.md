@@ -249,3 +249,5 @@ class SteamNLPProcessor:
 - [2019-08-29] (EDA) schedule note: Tune TF-IDF model for EDA
 
 - [2019-09-09] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
+
+- [2019-09-17] (EDA) schedule note: Tune TF-IDF model for EDA
