@@ -425,3 +425,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-08-28] (Notebook) schedule note: Document experiment comparing Notebook models
 
 - [2019-09-06] (NLP) schedule note: Document experiment comparing NLP models
+
+- [2019-09-17] (EDA) schedule note: Add exploratory chart for EDA
