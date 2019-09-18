@@ -134,3 +134,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-08-30] (NLP) schedule note: Add exploratory chart for NLP
 
 - [2019-09-11] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
+
+- [2019-09-18] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
