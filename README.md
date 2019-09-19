@@ -88,3 +88,5 @@ This project is for educational purposes.
 - [2019-08-30] (NLP) schedule note: Document experiment comparing NLP models
 
 - [2019-09-11] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
+
+- [2019-09-19] (NLP) schedule note: Add exploratory chart for NLP
