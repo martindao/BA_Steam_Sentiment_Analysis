@@ -655,3 +655,5 @@ if __name__ == "__main__":
 # [2019-09-09] (Notebook) schedule note: Tune TF-IDF model for Notebook
 
 # [2019-09-17] (NLP) schedule note: Document experiment comparing NLP models
+
+# [2019-09-26] (NLP) schedule note: Add exploratory chart for NLP
