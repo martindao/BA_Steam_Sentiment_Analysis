@@ -453,3 +453,5 @@ if __name__ == "__main__":
 # [2019-09-16] (NLP) schedule note: Document experiment comparing NLP models
 
 # [2019-09-24] (EDA) schedule note: Refine Steam sentiment pipeline for EDA
+
+# [2019-10-01] (Sentiment) schedule note: Add exploratory chart for Sentiment
