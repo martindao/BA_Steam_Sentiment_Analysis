@@ -58,3 +58,5 @@ reports/**/*.png binary
 # [2019-09-18] (NLP) schedule note: Refine Steam sentiment pipeline for NLP
 
 # [2019-09-26] (Notebook) schedule note: Tune TF-IDF model for Notebook
+
+# [2019-10-03] (EDA) schedule note: Tune TF-IDF model for EDA
