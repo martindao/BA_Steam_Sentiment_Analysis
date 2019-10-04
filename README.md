@@ -92,3 +92,5 @@ This project is for educational purposes.
 - [2019-09-19] (NLP) schedule note: Add exploratory chart for NLP
 
 - [2019-09-30] (EDA) schedule note: Add exploratory chart for EDA
+
+- [2019-10-04] (Sentiment) schedule note: Add exploratory chart for Sentiment
