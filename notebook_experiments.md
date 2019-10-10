@@ -431,3 +431,5 @@ class AdvancedSentimentAnalyzer:
 - [2019-09-24] (Sentiment) schedule note: Add exploratory chart for Sentiment
 
 - [2019-10-02] (Notebook) schedule note: Tune TF-IDF model for Notebook
+
+- [2019-10-10] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
