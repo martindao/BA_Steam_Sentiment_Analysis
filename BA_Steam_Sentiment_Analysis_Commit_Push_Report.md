@@ -140,3 +140,5 @@ Successfully pushed 21 historical commits from 2019 to the remote GitHub reposit
 - [2019-09-27] (Notebook) schedule note: Tune TF-IDF model for Notebook
 
 - [2019-10-04] (NLP) schedule note: Tune TF-IDF model for NLP
+
+- [2019-10-15] (NLP) schedule note: Document experiment comparing NLP models
