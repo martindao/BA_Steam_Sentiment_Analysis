@@ -94,3 +94,5 @@ This project is for educational purposes.
 - [2019-09-30] (EDA) schedule note: Add exploratory chart for EDA
 
 - [2019-10-04] (Sentiment) schedule note: Add exploratory chart for Sentiment
+
+- [2019-10-16] (Sentiment) schedule note: Refine Steam sentiment pipeline for Sentiment
