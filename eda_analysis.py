@@ -457,3 +457,5 @@ if __name__ == "__main__":
 # [2019-10-01] (Sentiment) schedule note: Add exploratory chart for Sentiment
 
 # [2019-10-10] (Sentiment) schedule note: Tune TF-IDF model for Sentiment
+
+# [2019-10-18] (NLP) schedule note: Add exploratory chart for NLP
