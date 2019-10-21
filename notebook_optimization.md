@@ -257,3 +257,5 @@ class SteamNLPProcessor:
 - [2019-10-02] (EDA) schedule note: Tune TF-IDF model for EDA
 
 - [2019-10-11] (Notebook) schedule note: Document experiment comparing Notebook models
+
+- [2019-10-21] (Notebook) schedule note: Tune TF-IDF model for Notebook
