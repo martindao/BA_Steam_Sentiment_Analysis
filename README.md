@@ -1,35 +1,57 @@
 # Steam Sentiment Analysis
 
-This project analyzes sentiment in Steam game reviews using various NLP techniques.
-
 ## Overview
+This repository contains the notebooks, scripts, and research notes that power the
+Steam review sentiment experiments. It focuses on TF–IDF based classifiers,
+signal-rich exploratory visualizations, and documentation that explains how the
+NLP workflow evolved between 2019 and 2023.
 
-The project explores different approaches to sentiment classification and analysis of game review text.
+## Repository Layout
+- `game-review-sentiment-analysis.ipynb` – primary notebook for feature
+  engineering, model comparison, and chart generation.
+- `tfidf_model_tuner.py` – reusable module for grid searching TF–IDF +
+  logistic-regression pipelines and exporting coefficient charts.
+- `eda_analysis.py` – utilities for dataset profiling and plot generation
+  (review length histograms, sentiment vs. playtime, etc.).
+- `Sandbox/` – scratch notebooks that represent daily experiments referenced in
+  the scheduled commits.
+- `notebook_experiments.md` / `notebook_optimization.md` – prose logs describing
+  each exploratory run.
 
-### Sentiment Analysis Models
+## Environment Setup
+1. Create and activate a virtual environment:
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\activate
+   ```
+2. Install the core dependencies:
+   ```powershell
+   pip install jupyter pandas scikit-learn seaborn matplotlib nltk
+   ```
+3. (Optional) download the latest Steam review export into `data/` if you want to
+   reproduce the full training pipeline.
 
-Experiment comparing different sentiment analysis approaches:
-- Traditional ML models (TF-IDF + classifiers)
-- Pre-trained transformer models
-- Custom neural networks
+## Running Workflows
+- Launch notebooks:
+  ```powershell
+  jupyter notebook game-review-sentiment-analysis.ipynb
+  ```
+- Run the TF–IDF tuner as a script to generate coefficient reports:
+  ```powershell
+  python tfidf_model_tuner.py
+  ```
+- Emit updated exploratory charts:
+  ```powershell
+  python eda_analysis.py
+  ```
 
-## Files
-
-- `game-review-sentiment-analysis.ipynb` - Main analysis notebook
-- `Sandbox/` - Additional experimental files
-
-## Getting Started
-
-To run the analysis:
-
-1. Install required dependencies
-2. Run the Jupyter notebook
-3. Explore the sentiment analysis results
-
-## License
-
-This project is for educational purposes.
-"" 
+## Quality & Automation
+- Keep notebooks clean with `jupyter nbconvert --ClearOutputPreprocessor.enabled=True`
+  before committing.
+- For code files, run `python -m compileall .` to catch syntax issues and format
+  with `ruff format` or `black` (if available in your toolchain).
+- Commit messages and timestamps should continue to follow the
+  OpenSpec-backed schedule (weekday, 09:00–17:00 local time).
 
 ### Exploratory Visualizations
 - Added a stacked sentiment vs. review-volume chart to track weekend spikes.
