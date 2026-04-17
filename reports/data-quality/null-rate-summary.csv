@@ -1,0 +1,5 @@
+column_name,total_count,null_count,non_null_count,null_rate_percent,unique_values
+review,5,1,4,20.0,4
+language,5,0,5,0.0,3
+voted_up,5,0,5,0.0,2
+author.playtime_forever,5,0,5,0.0,5

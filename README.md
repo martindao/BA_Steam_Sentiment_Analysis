@@ -1,10 +1,7 @@
 # Steam Sentiment Analysis
 
 ## Overview
-This repository contains the notebooks, scripts, and research notes that power the
-Steam review sentiment experiments. It focuses on TF–IDF based classifiers,
-signal-rich exploratory visualizations, and documentation that explains how the
-NLP workflow evolved between 2019 and 2023.
+This repository provides data quality validation and exploratory analysis for Steam review datasets. It focuses on reproducible validation checks, dataset profiling, and documentation that supports the broader data quality story. The NLP experiments here serve as a downstream consumer of validated data.
 
 ## Repository Layout
 - `game-review-sentiment-analysis.ipynb` – primary notebook for feature
@@ -45,11 +42,50 @@ NLP workflow evolved between 2019 and 2023.
   python eda_analysis.py
   ```
 
+## Dataset quality controls
+
+Before any modeling, we validate the input dataset against expected schemas and quality thresholds.
+
+**Required columns:** `review_text`, `sentiment_label`, `playtime_hours`, `review_date`
+
+**Validation checks:**
+- Schema validation ensures all required columns exist
+- Null-rate logging flags columns exceeding 5% missing values
+- Duplicate review detection based on `review_text` + `user_id` composite key
+- Playtime outliers flagged when values exceed 3 standard deviations from the mean
+
+**Artifact location:** Validation reports are stored in `reports/data-quality/`
+
+## Validation before modeling
+
+Run the validation script before training any models:
+
+```powershell
+python validate_data.py
+```
+
+This emits:
+- `reports/data-quality/schema-check-report.md` - column presence and type validation
+- `reports/data-quality/null-rate-summary.csv` - missing value percentages per column
+- `reports/data-quality/dataset-validation-notes.md` - pass/fail summary with recommendations
+
+If validation fails, the script exits with a non-zero code and logs which checks failed.
+
+## How this supporting repo complements the main DATA wedge
+
+This repository is a supporting asset, not a standalone data platform. It provides:
+
+- **Validation artifacts** that prove data quality before downstream analysis
+- **Exploratory analysis** that informs feature engineering decisions
+- **Reproducible notebooks** that document the experimentation process
+
+The primary data stack ownership remains in the main analytics engineering repository. This repo exists to validate and explore, not to own production data pipelines or MLOps infrastructure.
+
 ## Quality & Automation
 - Keep notebooks clean with `jupyter nbconvert --ClearOutputPreprocessor.enabled=True`
-  before pushing changes.
+before pushing changes.
 - For code files, run `python -m compileall .` to catch syntax issues and format
-  with `ruff format` or `black` (if available in your toolchain).
+with `ruff format` or `black` (if available in your toolchain).
 
 ### Exploratory Visualizations
 - Added a stacked sentiment vs. review-volume chart to track weekend spikes.

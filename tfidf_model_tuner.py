@@ -21,20 +21,37 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, List, Tuple, Any, Optional
 import warnings
-warnings.filterwarnings('ignore')
+import logging
+
+warnings.filterwarnings("ignore")
+
+# Configure logging for validation gate
+logger = logging.getLogger(__name__)
+
+# Import DataValidator for pre-modeling validation gate
+try:
+    from validate_data import DataValidator, REQUIRED_COLUMNS
+except ImportError:
+    # Fallback for cases where module is not in path
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).parent))
+    from validate_data import DataValidator, REQUIRED_COLUMNS
+
 
 class TfidfModelTuner:
     """
     TF-IDF model tuning class for Steam sentiment analysis.
-    
+
     This class handles the configuration, training, and optimization
     of TF-IDF vectorizers for sentiment classification tasks.
     """
-    
+
     def __init__(self, max_features: int = 2000, ngram_range: Tuple[int, int] = (1, 2)):
         """
         Initialize TF-IDF model tuner.
-        
+
         Args:
             max_features (int): Maximum number of features for TF-IDF vectorizer
             ngram_range (Tuple[int, int]): N-gram range for vectorization
@@ -44,154 +61,253 @@ class TfidfModelTuner:
         self.vectorizer = None
         self.best_params = None
         self.best_score = None
-        
+        self._validator = DataValidator()
+        self._validation_passed = False
+
+    def validate_training_data(
+        self,
+        X_train,
+        y_train,
+        required_columns: Optional[List[str]] = None,
+        raise_on_failure: bool = True,
+    ) -> bool:
+        """
+        Pre-modeling validation gate for training data.
+
+        Validates that training data meets quality requirements before
+        model training begins. Checks required columns, null rates,
+        and data integrity.
+
+        Args:
+            X_train: Training text data (list, array, or DataFrame)
+            y_train: Training labels
+            required_columns: Optional list of required columns for DataFrame input
+            raise_on_failure: If True, raises ValueError on validation failure
+
+        Returns:
+            bool: True if validation passes
+
+        Raises:
+            ValueError: If validation fails and raise_on_failure is True
+        """
+        logger.info("Running pre-modeling validation gate...")
+
+        if isinstance(X_train, pd.DataFrame):
+            results = self._validator.run_all_checks(X_train)
+            summary = self._validator.get_summary()
+
+            if not summary["all_passed"]:
+                failed_checks = [
+                    r["check_name"] for r in results if not r.get("passed", False)
+                ]
+                error_msg = self._format_validation_error(results, failed_checks)
+                logger.error(f"Validation failed: {error_msg}")
+
+                if raise_on_failure:
+                    raise ValueError(f"Pre-modeling validation failed:\n{error_msg}")
+                return False
+
+            self._validation_passed = True
+            logger.info("Validation passed: All checks successful")
+            return True
+
+        if hasattr(X_train, "__len__") and len(X_train) == 0:
+            error_msg = "Training data is empty"
+            logger.error(error_msg)
+            if raise_on_failure:
+                raise ValueError(error_msg)
+            return False
+
+        if y_train is not None and hasattr(y_train, "__len__"):
+            if len(X_train) != len(y_train):
+                error_msg = f"X_train ({len(X_train)}) and y_train ({len(y_train)}) length mismatch"
+                logger.error(error_msg)
+                if raise_on_failure:
+                    raise ValueError(error_msg)
+                return False
+
+        self._validation_passed = True
+        logger.info("Validation passed: Basic checks successful")
+        return True
+
+    def _format_validation_error(
+        self, results: List[Dict], failed_checks: List[str]
+    ) -> str:
+        """Format validation error messages for actionable feedback."""
+        error_parts = []
+        for result in results:
+            if not result.get("passed", False):
+                check_name = result.get("check_name", "unknown")
+                message = result.get("message", "No details available")
+                error_parts.append(f"  - [{check_name}] {message}")
+
+                details = result.get("details", {})
+                if "missing_columns" in details and details["missing_columns"]:
+                    error_parts.append(
+                        f"    Missing columns: {', '.join(details['missing_columns'])}"
+                    )
+                if "violations" in details:
+                    for col, violation in details["violations"].items():
+                        error_parts.append(
+                            f"    {col}: {violation['actual_rate']:.2%} exceeds threshold {violation['threshold']:.2%}"
+                        )
+
+        return "\n".join(error_parts)
+
     def create_vectorizer(self, **kwargs) -> TfidfVectorizer:
         """
         Create TF-IDF vectorizer with specified parameters.
-        
+
         Args:
             **kwargs: Additional parameters for TfidfVectorizer
-            
+
         Returns:
             TfidfVectorizer: Configured TF-IDF vectorizer
         """
         default_params = {
-            'max_features': self.max_features,
-            'ngram_range': self.ngram_range,
-            'stop_words': 'english',
-            'lowercase': True,
-            'strip_accents': 'unicode',
-            'max_df': 0.95,
-            'min_df': 2
+            "max_features": self.max_features,
+            "ngram_range": self.ngram_range,
+            "stop_words": "english",
+            "lowercase": True,
+            "strip_accents": "unicode",
+            "max_df": 0.95,
+            "min_df": 2,
         }
         default_params.update(kwargs)
-        
+
         return TfidfVectorizer(**default_params)
-    
-    def tune_model(self, X_train, y_train, param_grid: Dict = None) -> Dict[str, Any]:
+
+    def tune_model(
+        self, X_train, y_train, param_grid: Dict = None, skip_validation: bool = False
+    ) -> Dict[str, Any]:
         """
         Tune TF-IDF model hyperparameters using GridSearchCV.
-        
+
         Args:
             X_train: Training text data
             y_train: Training labels
             param_grid: Parameter grid for tuning
-            
+            skip_validation: If True, skip pre-modeling validation gate
+
         Returns:
             Dict[str, Any]: Tuning results including best parameters and scores
         """
+        if not skip_validation:
+            self.validate_training_data(X_train, y_train)
+
         if param_grid is None:
             param_grid = {
-                'tfidf__max_features': [1000, 2000, 3000],
-                'tfidf__ngram_range': [(1, 1), (1, 2), (1, 3)],
-                'tfidf__min_df': [1, 2, 3],
-                'tfidf__max_df': [0.8, 0.9, 0.95],
-                'classifier__C': [0.1, 1.0, 10.0]
+                "tfidf__max_features": [1000, 2000, 3000],
+                "tfidf__ngram_range": [(1, 1), (1, 2), (1, 3)],
+                "tfidf__min_df": [1, 2, 3],
+                "tfidf__max_df": [0.8, 0.9, 0.95],
+                "classifier__C": [0.1, 1.0, 10.0],
             }
-        
-        # Create pipeline
-        pipeline = Pipeline([
-            ('tfidf', TfidfVectorizer()),
-            ('classifier', LogisticRegression(random_state=42, max_iter=1000))
-        ])
-        
-        # Grid search
-        grid_search = GridSearchCV(
-            pipeline, 
-            param_grid, 
-            cv=5, 
-            scoring='accuracy',
-            n_jobs=-1,
-            verbose=1
+
+        pipeline = Pipeline(
+            [
+                ("tfidf", TfidfVectorizer()),
+                ("classifier", LogisticRegression(random_state=42, max_iter=1000)),
+            ]
         )
-        
+
+        grid_search = GridSearchCV(
+            pipeline, param_grid, cv=5, scoring="accuracy", n_jobs=-1, verbose=1
+        )
+
         print("Starting TF-IDF model hyperparameter tuning...")
         grid_search.fit(X_train, y_train)
-        
+
         self.best_params = grid_search.best_params_
         self.best_score = grid_search.best_score_
-        
+
         results = {
-            'best_params': self.best_params,
-            'best_score': self.best_score,
-            'cv_results': grid_search.cv_results_
+            "best_params": self.best_params,
+            "best_score": self.best_score,
+            "cv_results": grid_search.cv_results_,
         }
-        
+
         print(f"Best parameters: {self.best_params}")
         print(f"Best cross-validation score: {self.best_score:.4f}")
-        
+
         return results
-    
+
     def evaluate_model(self, X_train, X_test, y_train, y_test) -> Dict[str, float]:
         """
         Evaluate tuned model performance.
-        
+
         Args:
             X_train, X_test: Training and test text data
             y_train, y_test: Training and test labels
-            
+
         Returns:
             Dict[str, float]: Evaluation metrics
         """
         if self.best_params is None:
             raise ValueError("Model must be tuned before evaluation")
-        
+
         # Create pipeline with best parameters
-        pipeline = Pipeline([
-            ('tfidf', TfidfVectorizer()),
-            ('classifier', LogisticRegression(random_state=42, max_iter=1000))
-        ])
-        
+        pipeline = Pipeline(
+            [
+                ("tfidf", TfidfVectorizer()),
+                ("classifier", LogisticRegression(random_state=42, max_iter=1000)),
+            ]
+        )
+
         pipeline.set_params(**self.best_params)
         pipeline.fit(X_train, y_train)
-        
+
         # Predictions
         y_pred_train = pipeline.predict(X_train)
         y_pred_test = pipeline.predict(X_test)
-        
+
         # Metrics
         train_accuracy = accuracy_score(y_train, y_pred_train)
         test_accuracy = accuracy_score(y_test, y_pred_test)
-        
+
         results = {
-            'train_accuracy': train_accuracy,
-            'test_accuracy': test_accuracy,
-            'classification_report': classification_report(y_test, y_pred_test, output_dict=True)
+            "train_accuracy": train_accuracy,
+            "test_accuracy": test_accuracy,
+            "classification_report": classification_report(
+                y_test, y_pred_test, output_dict=True
+            ),
         }
-        
+
         print(f"Training Accuracy: {train_accuracy:.4f}")
         print(f"Test Accuracy: {test_accuracy:.4f}")
-        
+
         return results
-    
-    def plot_feature_importance(self, pipeline, feature_names: List[str], top_n: int = 20):
+
+    def plot_feature_importance(
+        self, pipeline, feature_names: List[str], top_n: int = 20
+    ):
         """
         Plot top feature importances from the logistic regression model.
-        
+
         Args:
             pipeline: Trained pipeline
             feature_names: List of feature names
             top_n: Number of top features to display
         """
         # Get feature importance (coefficients for logistic regression)
-        coefficients = pipeline.named_steps['classifier'].coef_[0]
-        
+        coefficients = pipeline.named_steps["classifier"].coef_[0]
+
         # Get top features
         top_indices = np.argsort(np.abs(coefficients))[-top_n:]
         top_features = [feature_names[i] for i in top_indices]
         top_coefficients = coefficients[top_indices]
-        
+
         # Plot
         plt.figure(figsize=(12, 8))
-        colors = ['red' if c < 0 else 'blue' for c in top_coefficients]
+        colors = ["red" if c < 0 else "blue" for c in top_coefficients]
         plt.barh(range(len(top_features)), top_coefficients, color=colors, alpha=0.7)
         plt.yticks(range(len(top_features)), top_features)
-        plt.xlabel('Coefficient Value')
-        plt.title(f'Top {top_n} TF-IDF Features for Sentiment Classification')
+        plt.xlabel("Coefficient Value")
+        plt.title(f"Top {top_n} TF-IDF Features for Sentiment Classification")
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         plt.show()
-        
+
         return top_features, top_coefficients
 
     def plot_sentiment_feature_map(
@@ -212,7 +328,9 @@ class TfidfModelTuner:
             pd.DataFrame: Aggregated feature contribution table
         """
         if not hasattr(pipeline, "named_steps"):
-            raise ValueError("Pipeline with named steps is required for feature mapping")
+            raise ValueError(
+                "Pipeline with named steps is required for feature mapping"
+            )
 
         vectorizer = pipeline.named_steps.get("tfidf")
         classifier = pipeline.named_steps.get("classifier")
@@ -274,13 +392,17 @@ class TfidfModelTuner:
         Returns:
             Aggregated sentiment distribution per playtime bucket.
         """
-        missing = {col for col in (hours_column, sentiment_column) if col not in df.columns}
+        missing = {
+            col for col in (hours_column, sentiment_column) if col not in df.columns
+        }
         if missing:
             raise ValueError(f"Missing required columns for sentiment chart: {missing}")
 
         filtered = df[[hours_column, sentiment_column]].dropna().copy()
         if filtered.empty:
-            raise ValueError("No rows available after filtering sentiment chart columns.")
+            raise ValueError(
+                "No rows available after filtering sentiment chart columns."
+            )
 
         quantiles = max(2, min(buckets, filtered[hours_column].nunique()))
         filtered["hours_bucket"] = pd.qcut(
@@ -318,290 +440,303 @@ class TfidfModelTuner:
 
         return summary
 
-    def tune_for_nlp(self, X_train, y_train) -> Dict[str, Any]:
+    def tune_for_nlp(
+        self, X_train, y_train, skip_validation: bool = False
+    ) -> Dict[str, Any]:
         """
         Specialized TF-IDF tuning for NLP tasks with enhanced parameters.
-        
+
         Args:
             X_train: Training text data
             y_train: Training labels
-            
+            skip_validation: If True, skip pre-modeling validation gate
+
         Returns:
             Dict[str, Any]: NLP-optimized tuning results
         """
+        if not skip_validation:
+            self.validate_training_data(X_train, y_train)
+
         print("=== NLP-Optimized TF-IDF Model Tuning ===")
-        
-        # Enhanced NLP-specific parameter grid
+
         nlp_param_grid = {
-            'tfidf__max_features': [2000, 3000, 5000, 8000],
-            'tfidf__ngram_range': [(1, 2), (1, 3), (2, 3)],
-            'tfidf__min_df': [2, 3, 5],
-            'tfidf__max_df': [0.85, 0.9, 0.95],
-            'tfidf__sublinear_tf': [True, False],
-            'tfidf__use_idf': [True, False],
-            'classifier__C': [0.1, 1.0, 10.0],
-            'classifier__penalty': ['l1', 'l2'],
-            'classifier__solver': ['liblinear', 'lbfgs']
+            "tfidf__max_features": [2000, 3000, 5000, 8000],
+            "tfidf__ngram_range": [(1, 2), (1, 3), (2, 3)],
+            "tfidf__min_df": [2, 3, 5],
+            "tfidf__max_df": [0.85, 0.9, 0.95],
+            "tfidf__sublinear_tf": [True, False],
+            "tfidf__use_idf": [True, False],
+            "classifier__C": [0.1, 1.0, 10.0],
+            "classifier__penalty": ["l1", "l2"],
+            "classifier__solver": ["liblinear", "lbfgs"],
         }
-        
-        # NLP-specific pipeline with enhanced preprocessing
+
         from sklearn.pipeline import Pipeline
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.linear_model import LogisticRegression
-        
-        nlp_pipeline = Pipeline([
-            ('tfidf', TfidfVectorizer(
-                stop_words='english',
-                lowercase=True,
-                strip_accents='unicode',
-                binary=False,
-                dtype=np.float32
-            )),
-            ('classifier', LogisticRegression(
-                random_state=42, 
-                max_iter=2000,
-                class_weight='balanced'
-            ))
-        ])
-        
-        # Grid search with NLP optimizations
-        grid_search = GridSearchCV(
-            nlp_pipeline, 
-            nlp_param_grid, 
-            cv=5, 
-            scoring='accuracy',
-            n_jobs=-1,
-            verbose=2
+
+        nlp_pipeline = Pipeline(
+            [
+                (
+                    "tfidf",
+                    TfidfVectorizer(
+                        stop_words="english",
+                        lowercase=True,
+                        strip_accents="unicode",
+                        binary=False,
+                        dtype=np.float32,
+                    ),
+                ),
+                (
+                    "classifier",
+                    LogisticRegression(
+                        random_state=42, max_iter=2000, class_weight="balanced"
+                    ),
+                ),
+            ]
         )
-        
+
+        grid_search = GridSearchCV(
+            nlp_pipeline, nlp_param_grid, cv=5, scoring="accuracy", n_jobs=-1, verbose=2
+        )
+
         print("Starting NLP-optimized TF-IDF hyperparameter tuning...")
         grid_search.fit(X_train, y_train)
-        
+
         self.best_params = grid_search.best_params_
         self.best_score = grid_search.best_score_
-        
+
         results = {
-            'best_params': self.best_params,
-            'best_score': self.best_score,
-            'cv_results': grid_search.cv_results_,
-            'nlp_optimized': True,
-            'feature_count': grid_search.best_estimator_.named_steps['tfidf'].get_feature_names_out().shape[0]
+            "best_params": self.best_params,
+            "best_score": self.best_score,
+            "cv_results": grid_search.cv_results_,
+            "nlp_optimized": True,
+            "feature_count": grid_search.best_estimator_.named_steps["tfidf"]
+            .get_feature_names_out()
+            .shape[0],
         }
-        
+
         print(f"NLP-optimized best parameters: {self.best_params}")
         print(f"NLP best cross-validation score: {self.best_score:.4f}")
         print(f"Selected features: {results['feature_count']}")
-        
+
         return results
+
 
 def compare_sentiment_models():
     """
     Compare different sentiment analysis models specifically for Steam reviews.
-    
+
     Comprehensive comparison of sentiment classification approaches optimized
     for Steam game review text including preprocessing and feature engineering.
-    
+
     Returns:
         Dict: Comparative analysis results
     """
     print("=== NLP Model Comparison for Steam Sentiment Analysis ===")
-    
+
     model_comparisons = {
-        'traditional_tfidf': {
-            'accuracy': 0.82,
-            'precision': 0.81,
-            'recall': 0.83,
-            'f1_score': 0.82,
-            'training_time': '2.5s',
-            'memory_usage': '120MB',
-            'interpretability': 'High',
-            'deployment_complexity': 'Low'
+        "traditional_tfidf": {
+            "accuracy": 0.82,
+            "precision": 0.81,
+            "recall": 0.83,
+            "f1_score": 0.82,
+            "training_time": "2.5s",
+            "memory_usage": "120MB",
+            "interpretability": "High",
+            "deployment_complexity": "Low",
         },
-        'enhanced_tfidf': {
-            'accuracy': 0.87,
-            'precision': 0.86,
-            'recall': 0.88,
-            'f1_score': 0.87,
-            'training_time': '1.8s',
-            'memory_usage': '95MB',
-            'interpretability': 'High',
-            'deployment_complexity': 'Low'
+        "enhanced_tfidf": {
+            "accuracy": 0.87,
+            "precision": 0.86,
+            "recall": 0.88,
+            "f1_score": 0.87,
+            "training_time": "1.8s",
+            "memory_usage": "95MB",
+            "interpretability": "High",
+            "deployment_complexity": "Low",
         },
-        'nlp_optimized_tfidf': {
-            'accuracy': 0.89,
-            'precision': 0.88,
-            'recall': 0.90,
-            'f1_score': 0.89,
-            'training_time': '1.5s',
-            'memory_usage': '85MB',
-            'interpretability': 'Medium',
-            'deployment_complexity': 'Medium'
+        "nlp_optimized_tfidf": {
+            "accuracy": 0.89,
+            "precision": 0.88,
+            "recall": 0.90,
+            "f1_score": 0.89,
+            "training_time": "1.5s",
+            "memory_usage": "85MB",
+            "interpretability": "Medium",
+            "deployment_complexity": "Medium",
         },
-        'steam_sentiment_focused': {
-            'accuracy': 0.91,
-            'precision': 0.90,
-            'recall': 0.92,
-            'f1_score': 0.91,
-            'training_time': '2.1s',
-            'memory_usage': '105MB',
-            'interpretability': 'High',
-            'deployment_complexity': 'Medium'
-        }
+        "steam_sentiment_focused": {
+            "accuracy": 0.91,
+            "precision": 0.90,
+            "recall": 0.92,
+            "f1_score": 0.91,
+            "training_time": "2.1s",
+            "memory_usage": "105MB",
+            "interpretability": "High",
+            "deployment_complexity": "Medium",
+        },
     }
-    
+
     # Performance analysis
-    best_accuracy = max(model['accuracy'] for model in model_comparisons.values())
-    best_model = [name for name, model in model_comparisons.items() 
-                  if model['accuracy'] == best_accuracy][0]
-    
+    best_accuracy = max(model["accuracy"] for model in model_comparisons.values())
+    best_model = [
+        name
+        for name, model in model_comparisons.items()
+        if model["accuracy"] == best_accuracy
+    ][0]
+
     # Generate comparison report
     comparison_report = {
-        'models_evaluated': len(model_comparisons),
-        'best_performing_model': best_model,
-        'best_accuracy': best_accuracy,
-        'model_details': model_comparisons,
-        'recommendations': {
-            'production_deployment': 'steam_sentiment_focused',
-            'fastest_training': 'nlp_optimized_tfidf',
-            'best_interpretability': 'enhanced_tfidf',
-            'memory_efficient': 'nlp_optimized_tfidf'
-        }
+        "models_evaluated": len(model_comparisons),
+        "best_performing_model": best_model,
+        "best_accuracy": best_accuracy,
+        "model_details": model_comparisons,
+        "recommendations": {
+            "production_deployment": "steam_sentiment_focused",
+            "fastest_training": "nlp_optimized_tfidf",
+            "best_interpretability": "enhanced_tfidf",
+            "memory_efficient": "nlp_optimized_tfidf",
+        },
     }
-    
+
     print(f"✓ Evaluated {comparison_report['models_evaluated']} NLP models")
     print(f"✓ Best performing model: {comparison_report['best_performing_model']}")
     print(f"✓ Best accuracy achieved: {comparison_report['best_accuracy']:.3f}")
-    
+
     return comparison_report
+
 
 def conduct_nlp_experiment_comparison():
     """
     Conduct comprehensive NLP model experiments for Steam sentiment analysis.
-    
+
     Returns:
         Dict: Detailed experimental comparison results
     """
     print("=== Comprehensive NLP Model Experiments for Steam Sentiment ===")
-    
+
     experiment_results = {
-        'baseline_experiments': {
-            'traditional_ml': {
-                'logistic_regression': {
-                    'accuracy': 0.82,
-                    'precision': 0.81,
-                    'recall': 0.83,
-                    'f1_score': 0.82,
-                    'training_time': '2.1s',
-                    'model_size': '45MB'
+        "baseline_experiments": {
+            "traditional_ml": {
+                "logistic_regression": {
+                    "accuracy": 0.82,
+                    "precision": 0.81,
+                    "recall": 0.83,
+                    "f1_score": 0.82,
+                    "training_time": "2.1s",
+                    "model_size": "45MB",
                 },
-                'svm': {
-                    'accuracy': 0.84,
-                    'precision': 0.83,
-                    'recall': 0.85,
-                    'f1_score': 0.84,
-                    'training_time': '3.2s',
-                    'model_size': '52MB'
+                "svm": {
+                    "accuracy": 0.84,
+                    "precision": 0.83,
+                    "recall": 0.85,
+                    "f1_score": 0.84,
+                    "training_time": "3.2s",
+                    "model_size": "52MB",
                 },
-                'random_forest': {
-                    'accuracy': 0.86,
-                    'precision': 0.85,
-                    'recall': 0.87,
-                    'f1_score': 0.86,
-                    'training_time': '4.5s',
-                    'model_size': '78MB'
-                }
+                "random_forest": {
+                    "accuracy": 0.86,
+                    "precision": 0.85,
+                    "recall": 0.87,
+                    "f1_score": 0.86,
+                    "training_time": "4.5s",
+                    "model_size": "78MB",
+                },
             }
         },
-        'advanced_experiments': {
-            'steam_optimized_nlp': {
-                'enhanced_tfidf': {
-                    'accuracy': 0.88,
-                    'precision': 0.87,
-                    'recall': 0.89,
-                    'f1_score': 0.88,
-                    'training_time': '1.8s',
-                    'model_size': '38MB'
+        "advanced_experiments": {
+            "steam_optimized_nlp": {
+                "enhanced_tfidf": {
+                    "accuracy": 0.88,
+                    "precision": 0.87,
+                    "recall": 0.89,
+                    "f1_score": 0.88,
+                    "training_time": "1.8s",
+                    "model_size": "38MB",
                 },
-                'sentiment_specific': {
-                    'accuracy': 0.90,
-                    'precision': 0.89,
-                    'recall': 0.91,
-                    'f1_score': 0.90,
-                    'training_time': '2.3s',
-                    'model_size': '42MB'
-                }
+                "sentiment_specific": {
+                    "accuracy": 0.90,
+                    "precision": 0.89,
+                    "recall": 0.91,
+                    "f1_score": 0.90,
+                    "training_time": "2.3s",
+                    "model_size": "42MB",
+                },
             }
         },
-        'statistical_analysis': {
-            'significance_tests': {
-                'anova_f_statistic': 12.45,
-                'p_value': 0.001,
-                'effect_size': 'medium'
+        "statistical_analysis": {
+            "significance_tests": {
+                "anova_f_statistic": 12.45,
+                "p_value": 0.001,
+                "effect_size": "medium",
             },
-            'cross_validation': {
-                'mean_std': 0.87,
-                'confidence_interval': [0.85, 0.89]
-            }
-        }
+            "cross_validation": {"mean_std": 0.87, "confidence_interval": [0.85, 0.89]},
+        },
     }
-    
+
     print("✓ Conducted baseline ML experiments")
     print("✓ Tested advanced Steam-optimized NLP models")
     print("✓ Performed statistical significance testing")
-    print(f"✓ Best performing model: sentiment_specific (accuracy: {experiment_results['advanced_experiments']['steam_optimized_nlp']['sentiment_specific']['accuracy']:.3f})")
-    
+    print(
+        f"✓ Best performing model: sentiment_specific (accuracy: {experiment_results['advanced_experiments']['steam_optimized_nlp']['sentiment_specific']['accuracy']:.3f})"
+    )
+
     return experiment_results
+
 
 def demo_tfidf_tuning():
     """
     Demonstration of TF-IDF model tuning for Steam sentiment analysis.
-    
+
     Refined pipeline specifically optimized for Jupyter notebook environments
     with enhanced Steam-specific preprocessing and sentiment analysis features.
     """
     print("=== Steam Sentiment Analysis - TF-IDF Model Tuning Demo ===")
-    
+
     # Sample data for demonstration
     sample_reviews = [
         "Amazing game with great gameplay and story",
-        "Terrible graphics and boring gameplay", 
+        "Terrible graphics and boring gameplay",
         "Love the music and art style",
         "Awful combat mechanics",
         "Beautiful visuals and engaging narrative",
         "Poor optimization and frame drops",
         "Excellent storytelling and character development",
-        "Lacks depth and repetitive gameplay"
+        "Lacks depth and repetitive gameplay",
     ] * 50  # Expand for demo
-    
+
     sample_labels = [1, 0, 1, 0, 1, 0, 1, 0] * 50
-    
+
     # Create tuner
     tuner = TfidfModelTuner(max_features=1000)
-    
+
     # Simplified parameter grid for demo
     param_grid = {
-        'tfidf__max_features': [500, 1000],
-        'tfidf__ngram_range': [(1, 1), (1, 2)],
-        'classifier__C': [1.0, 10.0]
+        "tfidf__max_features": [500, 1000],
+        "tfidf__ngram_range": [(1, 1), (1, 2)],
+        "classifier__C": [1.0, 10.0],
     }
-    
+
     # Simulate train-test split
     from sklearn.model_selection import train_test_split
+
     X_train, X_test, y_train, y_test = train_test_split(
         sample_reviews, sample_labels, test_size=0.2, random_state=42
     )
-    
+
     # Tune model
     results = tuner.tune_model(X_train, y_train, param_grid)
-    
+
     # Evaluate model
     eval_results = tuner.evaluate_model(X_train, X_test, y_train, y_test)
-    
+
     print("\n=== TF-IDF Model Tuning Complete ===")
     print(f"Best cross-validation score: {results['best_score']:.4f}")
     print(f"Test accuracy: {eval_results['test_accuracy']:.4f}")
-    
+
     return tuner, results, eval_results
+
 
 if __name__ == "__main__":
     demo_tfidf_tuning()
