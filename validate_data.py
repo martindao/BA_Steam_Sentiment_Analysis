@@ -665,11 +665,18 @@ Examples:
         return 0
 
     if not args.data_path:
+        print("\n" + "=" * 60)
+        print("╔══════════════════════════════════════════════════════╗")
+        print("║              🎮 DEMO MODE ACTIVE 🎮                  ║")
+        print("╚══════════════════════════════════════════════════════╝")
         print("=" * 60)
-        print("Steam Sentiment Analysis - Data Validation")
-        print("=" * 60)
-        print("\nNote: This is a demonstration of the validation framework.")
-        print("To validate actual data, use --data-path option.\n")
+        print("\nThis is a demonstration of the data validation framework.")
+        print("Sample data with intentional issues will be validated to")
+        print("show how the framework detects and reports data quality problems.")
+        print(
+            "\nTo validate actual data, use: python validate_data.py --data-path <file>"
+        )
+        print("=" * 60 + "\n")
 
         sample_data = {
             "review": [
@@ -689,14 +696,22 @@ Examples:
         results = validator.run_all_checks(df)
         summary = validator.get_summary()
 
-    print_check_results(results, summary)
+        print_check_results(results, summary)
 
-    validator.validate_schema(df, REQUIRED_COLUMNS)
-    validator.calculate_null_rates(df)
-    validator.check_duplicates(df)
-    validator.save_artifacts()
+        validator.validate_schema(df, REQUIRED_COLUMNS)
+        validator.calculate_null_rates(df)
+        validator.check_duplicates(df)
+        validator.save_artifacts()
 
-    return 0 if summary["all_passed"] else 1
+        # Demo mode: always exit cleanly (it's a demo, not a real failure)
+        print("\n" + "-" * 60)
+        print("📋 DEMO COMPLETE")
+        print("-" * 60)
+        print("This was a demonstration with sample data containing intentional")
+        print("issues to showcase validation capabilities. In production use,")
+        print("validation failures would result in exit code 1.")
+        print("-" * 60 + "\n")
+        return 0
 
     data_path = Path(args.data_path)
     if not data_path.exists():

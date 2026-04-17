@@ -1,62 +1,55 @@
 # Steam Sentiment Analysis
 
 ## Overview
+
 This repository provides data quality validation and exploratory analysis for Steam review datasets. It focuses on reproducible validation checks, dataset profiling, and documentation that supports the broader data quality story. The NLP experiments here serve as a downstream consumer of validated data.
 
+## Quick Start
+
+```powershell
+# 1. Create and activate virtual environment
+python -m venv .venv
+.\.venv\Scripts\activate
+
+# 2. Install dependencies
+pip install jupyter pandas scikit-learn seaborn matplotlib nltk
+
+# 3. Validate your data
+python validate_data.py
+
+# 4. Launch the primary notebook
+jupyter notebook game-review-sentiment-analysis.ipynb
+```
+
 ## Repository Layout
-- `game-review-sentiment-analysis.ipynb` – primary notebook for feature
-  engineering, model comparison, and chart generation.
-- `tfidf_model_tuner.py` – reusable module for grid searching TF–IDF +
-  logistic-regression pipelines and exporting coefficient charts.
-- `eda_analysis.py` – utilities for dataset profiling and plot generation
-  (review length histograms, sentiment vs. playtime, etc.).
-- `Sandbox/` – scratch notebooks that represent daily experiments referenced in
-  the historical log.
-- `notebook_experiments.md` / `notebook_optimization.md` – prose logs describing
-  each exploratory run.
 
-## Environment Setup
-1. Create and activate a virtual environment:
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\activate
-   ```
-2. Install the core dependencies:
-   ```powershell
-   pip install jupyter pandas scikit-learn seaborn matplotlib nltk
-   ```
-3. (Optional) download the latest Steam review export into `data/` if you want to
-   reproduce the full training pipeline.
+| File | Purpose |
+|------|---------|
+| `game-review-sentiment-analysis.ipynb` | Primary notebook for feature engineering, model comparison, and chart generation |
+| `tfidf_model_tuner.py` | Grid search module for TF-IDF + logistic regression pipelines with coefficient chart exports |
+| `eda_analysis.py` | Dataset profiling utilities (review length histograms, sentiment vs. playtime, etc.) |
+| `Sandbox/` | Scratch notebooks representing daily experiments referenced in the historical log |
+| `notebook_experiments.md` | Prose log describing each exploratory run |
+| `notebook_optimization.md` | Prose log for optimization experiments |
 
-## Running Workflows
-- Launch notebooks:
-  ```powershell
-  jupyter notebook game-review-sentiment-analysis.ipynb
-  ```
-- Run the TF–IDF tuner as a script to generate coefficient reports:
-  ```powershell
-  python tfidf_model_tuner.py
-  ```
-- Emit updated exploratory charts:
-  ```powershell
-  python eda_analysis.py
-  ```
-
-## Dataset quality controls
+## Dataset Quality Controls
 
 Before any modeling, we validate the input dataset against expected schemas and quality thresholds.
 
 **Required columns:** `review_text`, `sentiment_label`, `playtime_hours`, `review_date`
 
 **Validation checks:**
-- Schema validation ensures all required columns exist
-- Null-rate logging flags columns exceeding 5% missing values
-- Duplicate review detection based on `review_text` + `user_id` composite key
-- Playtime outliers flagged when values exceed 3 standard deviations from the mean
+
+| Check | Description |
+|-------|-------------|
+| Schema validation | Ensures all required columns exist |
+| Null-rate logging | Flags columns exceeding 5% missing values |
+| Duplicate detection | Identifies duplicates via `review_text` + `user_id` composite key |
+| Playtime outliers | Flags values exceeding 3 standard deviations from the mean |
 
 **Artifact location:** Validation reports are stored in `reports/data-quality/`
 
-## Validation before modeling
+## Validation Before Modeling
 
 Run the validation script before training any models:
 
@@ -64,14 +57,14 @@ Run the validation script before training any models:
 python validate_data.py
 ```
 
-This emits:
-- `reports/data-quality/schema-check-report.md` - column presence and type validation
-- `reports/data-quality/null-rate-summary.csv` - missing value percentages per column
-- `reports/data-quality/dataset-validation-notes.md` - pass/fail summary with recommendations
+This generates:
+- `reports/data-quality/schema-check-report.md` - Column presence and type validation
+- `reports/data-quality/null-rate-summary.csv` - Missing value percentages per column
+- `reports/data-quality/dataset-validation-notes.md` - Pass/fail summary with recommendations
 
 If validation fails, the script exits with a non-zero code and logs which checks failed.
 
-## How this supporting repo complements the main DATA wedge
+## How This Repository Complements the Main Data Stack
 
 This repository is a supporting asset, not a standalone data platform. It provides:
 
@@ -82,17 +75,24 @@ This repository is a supporting asset, not a standalone data platform. It provid
 The primary data stack ownership remains in the main analytics engineering repository. This repo exists to validate and explore, not to own production data pipelines or MLOps infrastructure.
 
 ## Quality & Automation
-- Keep notebooks clean with `jupyter nbconvert --ClearOutputPreprocessor.enabled=True`
-before pushing changes.
-- For code files, run `python -m compileall .` to catch syntax issues and format
-with `ruff format` or `black` (if available in your toolchain).
+
+**Notebooks:** Clear outputs before pushing changes:
+```powershell
+jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace game-review-sentiment-analysis.ipynb
+```
+
+**Code files:** Check syntax and format:
+```powershell
+python -m compileall .
+ruff format .  # or: black .
+```
 
 ### Exploratory Visualizations
-- Added a stacked sentiment vs. review-volume chart to track weekend spikes.
-- Logged genre-specific filters for the notebook demo to keep comparisons reproducible.
-- Linked `reports/visualizations/sentiment_volume.png` for later sharing.
+
+- Stacked sentiment vs. review-volume chart tracks weekend spikes
+- Genre-specific filters for notebook demos keep comparisons reproducible
+- Outputs saved to `reports/visualizations/sentiment_volume.png`
 
 ### EDA Notebook Recipes
-- Described how to call `plot_sentiment_vs_hours()` to generate stacked sentiment charts for stakeholder updates.
-- Added reminder to store the resulting PNG in `reports/visualizations/` for version control tracking.
-- Highlighted the review segmentation filters we apply before exporting the chart.
+
+Use `plot_sentiment_vs_hours()` to generate stacked sentiment charts for stakeholder updates. Store resulting PNGs in `reports/visualizations/` for version control tracking. Apply review segmentation filters before exporting charts.
